@@ -90,55 +90,6 @@ function runFfmpeg(args) {
     return runCommand(cmd);
 }
 
-async function processFilesParallel(files, processFn, maxConcurrency = 8) {
-    const results = [];
-    const executing = new Set();
-    for (const file of files) {
-        const promise = Promise.resolve().then(() => processFn(file));
-        results.push(promise);
-        executing.add(promise);
-        promise.then(() => executing.delete(promise));
-        if (executing.size >= maxConcurrency) {
-            await Promise.race(executing);
-        }
-    }
-    return Promise.all(results);
-}
-
-// 二进制合并多个文件为一个文件
-async function mergeFilesSequentially(filePaths, outputPath) {
-    console.log(`开始合并 ${filePaths.length} 个文件到: ${outputPath}`);
-    appendLog(`\n开始合并 ${filePaths.length} 个文件到: ${path.basename(outputPath)}`);
-    
-    const writeStream = fs.createWriteStream(outputPath);
-    
-    for (let i = 0; i < filePaths.length; i++) {
-        const filePath = filePaths[i];
-        const fileBuffer = await fsp.readFile(filePath);
-        await new Promise((resolve, reject) => {
-            writeStream.write(fileBuffer, (err) => {
-                if (err) {
-                    writeStream.end();
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
-        
-        // 显示进度
-        if ((i + 1) % 10 === 0 || i === filePaths.length - 1) {
-            const progress = Math.round(((i + 1) / filePaths.length) * 100);
-            console.log(`合并进度: ${i + 1}/${filePaths.length} (${progress}%)`);
-        }
-    }
-    
-    writeStream.end();
-    await new Promise((resolve) => writeStream.on('close', resolve));
-    console.log(`✅ 文件合并完成: ${outputPath}`);
-    return outputPath;
-}
-
 // 使用cbox.exe解密完整文件
 async function decryptCombinedFile(encryptedPath, outputPath) {
     const cboxExePath = path.join(appDir, "bin", "cbox.exe");
