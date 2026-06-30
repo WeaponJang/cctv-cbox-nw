@@ -8,7 +8,7 @@ const appDir = process.cwd();
 const childProcesses = new Set(); 
 let isRunning = false; 
 let stopBtn, startBtn, logOutput, inputGuid; 
-
+let qualitySelect;
 // 日志输出封装：自动追加并滚动到底部
 function appendLog(msg) { 
     if (!logOutput) return; 
@@ -18,6 +18,7 @@ function appendLog(msg) {
 } 
 
 function init() { 
+	qualitySelect = document.getElementById('quality');
     stopBtn = document.getElementById('stopBtn'); 
     startBtn = document.getElementById('startBtn'); 
     logOutput = document.getElementById('logOutput'); 
@@ -179,8 +180,10 @@ async function downloadFile(url, destPath) {
 
 // 修改核心逻辑：先解密分片，再合并
 async function main(guid) { 
+	// 码率
+	const brt = qualitySelect.value;
     const cdn = "drm.cntv.vod.dnsv1.com"; 
-    const m3u8Url = `http://${cdn}/asp/enc2/hls/2000/0303000a/3/default/${guid}/2000.m3u8`; 
+    const m3u8Url = `http://${cdn}/asp/enc2/hls/${brt}/0303000a/3/default/${guid}/${brt}.m3u8`; 
     const outputDir = path.join(appDir, `${guid}`); 
     const finalOutput = path.join(appDir, "..", "videos", `${guid}.mp4`); 
 
