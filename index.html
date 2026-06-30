@@ -216,16 +216,15 @@
             <label for="inputGuid">请输入视频 GUID:</label>
             <div class="input-wrapper">
                 <input type="text" id="inputGuid" placeholder="例如: 8528b2de72904f15a740383d3c1e9917" autofocus>
-				
+				<select id="quality">
+	                <option value="450">流畅(450)</option>
+	                <option value="850">标清(850)</option>
+	                <option value="1200">高清(1200)</option>
+	                <option value="2000" selected>超清 (2000)</option>
+	                <option value="3000">蓝光(3000)</option>
+	                <option value="4000">原画 (4000)</option>
+	            </select>
             </div>
-			<select id="quality">
-                <option value="450">流畅(450)</option>
-                <option value="850">标清(850)</option>
-                <option value="1200">高清(1200)</option>
-                <option value="2000" selected>超清 (2000)</option>
-                <option value="3000">蓝光(3000)</option>
-                <option value="4000">原画 (4000)</option>
-            </select>
         </div>
 
         <div class="btn-group">
