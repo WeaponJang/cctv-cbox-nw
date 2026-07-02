@@ -220,7 +220,7 @@ async function main(guid) {
     const concatContent = decTsPaths.map(p => `file '${p.replace(/'/g, "'\\''")}'`).join('\n'); 
     await fsp.writeFile(concatListPath, concatContent, 'utf-8'); 
 
-    await runFfmpeg(`-fflags +genpts -f concat -safe 0 -i "${concatListPath}" -c copy "${finalOutput}"`); 
+    await runFfmpeg(`-f concat -safe 0 -i "${concatListPath}" -c copy -fflags +genpts -avoid_negative_ts make_zero "${finalOutput}"`); 
 
     appendLog(`<br>✅ 合并完成: ${finalOutput}`); 
 
