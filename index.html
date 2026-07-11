@@ -3,247 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCTV-视频下载器</title>
+    <title>Artplayer 播放器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            width: 100%;
-            max-width: 100vw;
-        }
-
-        h1 {
-            text-align: center;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        h1::before {
-            content: '📺 ';
-        }
-
-        .input-group {
-            margin-bottom: 10px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-group input {
-            flex: 1;
-            padding: 10px 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: #0f3460;
-            box-shadow: 0 0 0 5px rgba(15, 52, 96, 0.1);
-        }
-
-        .input-group input::placeholder {
-            color: #aaa;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #startBtn {
-            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
-            color: white;
-        }
-
-        #startBtn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 10px rgba(15, 52, 96, 0.4);
-        }
-
-        #startBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #stopBtn {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-        }
-
-        #stopBtn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 10px rgba(231, 76, 60, 0.4);
-        }
-
-        #stopBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .log-container {
-            background: #1a1a2e;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .log-container h3 {
-            background: #0f3460;
-            color: white;
-            padding: 2px 2px;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        #logOutput {
-			max-height: 800px;
-            height: 360px;
-            overflow-y: auto;
-            padding: 0px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #ecf0f1;
-        }
-
-        #logOutput .log-line {
-            margin-bottom: 4px;
-            word-wrap: break-word;
-        }
-
-        #logOutput .log-info { color: #3498db; }
-        #logOutput .log-success { color: #2ecc71; }
-        #logOutput .log-error { color: #e74c3c; }
-        #logOutput .log-warn { color: #f39c12; }
-
-
-        /* 滚动条样式 */
-        #logOutput::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        #logOutput::-webkit-scrollbar-track {
-            background: #16213e;
-        }
-
-        #logOutput::-webkit-scrollbar-thumb {
-            background: #0f3460;
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
+        .artplayer-app { width: 100%; height: 100%; }
+        /* 调试信息样式 */
+        #debug-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
             border-radius: 4px;
-        }
-
-        #logOutput::-webkit-scrollbar-thumb:hover {
-            background: #1a5276;
-        }
-
-        .help-text {
-            margin-top: 2px;
-            padding: 0px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .help-text h4 {
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .help-text code {
-            background: #e9ecef;
-            padding: 2px 2px;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            z-index: 9999;
+            pointer-events: none;
+            word-break: break-all;
+            max-width: 80%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>CCTV 视频下载器</h1>
-        
-        <div class="input-group">
-            <label for="inputGuid">请输入视频 GUID:</label>
-            <div class="input-wrapper">
-                <input type="text" id="inputGuid" placeholder="例如: 8528b2de72904f15a740383d3c1e9917" autofocus>
-				<select id="quality">
-	                <option value="450">流畅(450)</option>
-	                <option value="850">标清(850)</option>
-	                <option value="1200">高清(1200)</option>
-	                <option value="2000" selected>超清 (2000)</option>
-	                <option value="3000">蓝光(3000)</option>
-	                <option value="4000">原画 (4000)</option>
-	            </select>
-            </div>
-        </div>
+    <div id="debug-info">正在加载...</div>
+    <div class="artplayer-app"></div>
 
-        <div class="btn-group">
-            <button id="startBtn">🚀 开始下载</button>
-            <button id="stopBtn" disabled>⏹ 停止</button>
-        </div>
-        <div class="log-container">
-            <h3>📋 操作日志</h3>
-            <div id="logOutput"></div>
-        </div>
+    <!-- 引入必要的库 -->
+    <script src="artplayer.js"></script>
+    <script src="mpegts.js"></script>
+    <script src="hls.js"></script>
 
-        <div class="help-text">
-            <h4>💡 使用说明</h4>
-            <p>1. 打开 CCTV 视频页面，从js对象中获取 GUID（如: <code><strong>8528b2de72904f15a740383d3c1e9917</strong></code>）</p>
-            <p>2. 将 GUID 粘贴到输入框中，点击"开始下载"</p>
-            <p>3. 等待下载和解密完成，视频将保存在 <code>主程序同级的videos</code> 目录下</p>
+    <script>
+        // --- 工具函数：获取视频源 ---
+        function getVideoSource() {
+            // 1. 尝试从查询参数 ?src= 获取
+            const urlParams = new URLSearchParams(window.location.search);
+            let src = urlParams.get('src');
 
-        </div>
-    </div>
-    <script src="index.js"></script>
+            // 2. 如果查询参数没有，尝试从哈希 # 获取
+            if (!src && window.location.hash) {
+                src = decodeURIComponent(window.location.hash.substring(1)); // 去掉开头的 #
+            }
+            return src;
+        }
+
+        const videoUrl = getVideoSource();
+        const debugInfo = document.getElementById('debug-info');
+
+        if (!videoUrl) {
+            document.body.innerHTML = '<h1 style="color:white; text-align:center; margin-top:20%;">未提供视频链接</h1>';
+            debugInfo.style.display = 'none'; // 隐藏调试信息
+            throw new Error('No video source provided');
+        }
+
+        // 在页面上显示当前播放的链接，方便调试
+        debugInfo.innerText = `播放地址: ${videoUrl}`;
+		
+        // 根据文件扩展名判断类型
+        let type = '';
+        const urlObj = new URL(videoUrl);
+		const pathname = urlObj.pathname.toLowerCase();
+		if (pathname.endsWith('.flv')) {
+			type = 'flv';
+		} else if (pathname.endsWith('.m3u8')) {
+			type = 'm3u8';
+		} else {
+			debugInfo.innerText += ' (类型未知)';
+		}
+
+        // --- 播放逻辑函数 ---
+
+        // FLV 播放函数
+        function playFlv(video, url, art) {
+            if (mpegts.isSupported()) {
+                if (art.flv) art.flv.destroy();
+                const flv = mpegts.createPlayer({
+                    type: 'flv',
+                    url: url,
+                    isLive: true, // 建议开启直播模式，减少缓存
+                    cors: true,
+                });
+                flv.attachMediaElement(video);
+                flv.load();
+                art.flv = flv;
+                art.on('destroy', () => flv.destroy());
+            } else {
+                art.notice.show = '不支持 FLV 播放格式';
+            }
+        }
+
+        // M3U8 播放函数
+        function playM3u8(video, url, art) {
+            if (Hls.isSupported()) {
+                if (art.hls) art.hls.destroy();
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                art.hls = hls;
+                art.on('destroy', () => hls.destroy());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Safari 等原生支持
+                video.src = url;
+            } else {
+                art.notice.show = '不支持 M3U8 播放格式';
+            }
+        }
+
+        // --- 初始化 Artplayer ---
+        const art = new Artplayer({
+            container: '.artplayer-app',
+            url: videoUrl,
+            type: type,
+            title: decodeURIComponent(videoUrl.split('/').pop()) || '视频播放', // 尝试从链接提取文件名作为标题
+            volume: 0.8,
+            isLive: type === 'flv', // 如果是 flv，通常视为直播流
+            muted: false,
+            autoplay: true,
+            pip: true,
+            setting: true,
+            playbackRate: true,
+            aspectRatio: true,
+            screenshot: true,
+            customType: {
+                flv: playFlv,
+                m3u8: playM3u8,
+            },
+        });
+
+        art.on('ready', () => {
+            console.info('播放器已就绪', art);
+            debugInfo.innerText += ' - 播放就绪';
+        });
+
+        art.on('error', (err) => {
+             console.error('播放出错', err);
+             art.notice.show = '播放出错，请检查链接或网络';
+             debugInfo.innerText += ' - 播放出错';
+        });
+
+    </script>
 </body>
 </html>
