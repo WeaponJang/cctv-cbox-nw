@@ -1,23 +1,3 @@
-# cctv-cbox-nw
-### 本项目的出发点是将52pj网上的大神开发的cbox解密工具封装成一个nwjs应用,
-### 因cbox只支持Windows系统,所以本项目也只支持Windows
-
-### 运行本项目需要nwjs的SDK和52pj网的大神开发的cbox.exe,以及开源项目ffmpeg的可执行文件ffmpeg.exe,
-### 本项目中的文件需要放到package.nw文件夹里
-确保package.nw里的文件结构如下所示:
-
-+ bin *
-+ index.html
-+ index.js
-+ package.json
-+ UDRM_LICENSE.v1.0 *
-
-### 其中标注了 * 号的部分需要用户从52pj网上找到名为cbox.exe的可执行文件和开源项目ffmpeg的可执行文件ffmpeg.exe,
-### cbox.exe和ffmpeg.exe以及调用到的dll文件都需要放到bin文件夹下, 其中 UDRM_LICENSE.v1.0 这个文件要放到bin文件夹外面
-
-### nwjs的SDK目录下包含一个nw.exe程序,将package.nw文件夹放在nw.exe的同级文件夹里,
-+ nw-app
-+ ◟ nw.exe
-+ ◟ package.nw
-
-## ~~ 双击运行nw.exe即可使用
+## 本项目是基于artplayer播放器制作的浏览器扩展,
+### 本项目旨在替代 native flv Playback,由于这个参考项目被谷歌商店因未升级MV3而下架,所以开发此扩展用于直接在浏览器播放hls和flv链接
+*** 只做了最简单的单击劫持和请求劫持,类似CCTV那种需要 mse 处理过的M3U8链接和其他格式的视频流暂无适配计划
