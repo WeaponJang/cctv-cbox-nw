@@ -1,45 +1,15 @@
-// --- 原有的点击事件监听保持不变 ---
-document.addEventListener('click', function(e) {
-  const anchor = e.target.closest('a');
-  if (!anchor || !anchor.href) return;
-
-  try {
-    const url = new URL(anchor.href);
-    const pathname = url.pathname.toLowerCase();
-
-    if (pathname.endsWith('.flv') || pathname.endsWith('.m3u8')) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // 直接打开播放器页面，不再通过 background 消息，更直接
-      const playerUrl = chrome.runtime.getURL('player.html') + "#" + encodeURIComponent(anchor.href);
-      window.open(playerUrl, '_blank');
+document.addEventListener('click', function (e) {
+    if (e.target.href) {
+        var href = e.target.href;
+        // 获取去除参数和锚点的基础链接
+        var baseUrl = href.split('?')[0].split('#')[0];
+        
+        // 检查是否为 m3u8 或 flv 结尾
+        if (baseUrl.endsWith(".m3u8") || baseUrl.endsWith(".flv")) {
+            e.preventDefault();
+            e.stopPropagation();
+            // 发送消息给后台，命令名称保持不变或根据需要修改
+            chrome.runtime.sendMessage({command: 'CMD_PLAY_M3U8', url: href}, function (response) {});
+        }
     }
-  } catch (err) {
-    console.warn('Invalid URL clicked:', anchor.href);
-  }
-});
-
-// --- 新增：右键菜单功能 ---
-// 创建一个右键菜单项
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "play-with-artplayer",
-    title: "用 Artplayer 播放视频",
-    contexts: ["link"]
-  });
-});
-
-// 监听右键菜单的点击事件
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "play-with-artplayer" && info.linkUrl) {
-    const urlLower = info.linkUrl.toLowerCase();
-    if (urlLower.endsWith('.flv') || urlLower.endsWith('.m3u8')) {
-      // 向 background script 发送消息
-      chrome.runtime.sendMessage({
-        command: 'playVideo',
-        url: info.linkUrl
-      });
-    }
-  }
 });

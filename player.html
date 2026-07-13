@@ -4,143 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artplayer 播放器</title>
+    <link rel="stylesheet" href="common.css">
+    <!-- 引入样式，如果是 artplayer 自带样式，请确保引入 artplayer.css -->
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
+        body, html { width: 100%; height: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; }
         .artplayer-app { width: 100%; height: 100%; }
-        /* 调试信息样式 */
-        #debug-info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 9999;
-            pointer-events: none;
-            word-break: break-all;
-            max-width: 80%;
-        }
     </style>
+    <!-- 引入库，请确保文件名与实际下载的一致 -->
+    <script src="hls.js"></script>
+    <script src="mpegts.js"></script>
+    <script src="artplayer.js"></script>
 </head>
 <body>
-    <div id="debug-info">正在加载...</div>
     <div class="artplayer-app"></div>
-
-    <!-- 引入必要的库 -->
-    <script src="artplayer.js"></script>
-    <script src="mpegts.js"></script>
-    <script src="hls.js"></script>
-
-    <script>
-        // --- 工具函数：获取视频源 ---
-        function getVideoSource() {
-            // 1. 尝试从查询参数 ?src= 获取
-            const urlParams = new URLSearchParams(window.location.search);
-            let src = urlParams.get('src');
-
-            // 2. 如果查询参数没有，尝试从哈希 # 获取
-            if (!src && window.location.hash) {
-                src = decodeURIComponent(window.location.hash.substring(1)); // 去掉开头的 #
-            }
-            return src;
-        }
-
-        const videoUrl = getVideoSource();
-        const debugInfo = document.getElementById('debug-info');
-
-        if (!videoUrl) {
-            document.body.innerHTML = '<h1 style="color:white; text-align:center; margin-top:20%;">未提供视频链接</h1>';
-            debugInfo.style.display = 'none'; // 隐藏调试信息
-            throw new Error('No video source provided');
-        }
-
-        // 在页面上显示当前播放的链接，方便调试
-        debugInfo.innerText = `播放地址: ${videoUrl}`;
-		
-        // 根据文件扩展名判断类型
-        let type = '';
-        const urlObj = new URL(videoUrl);
-		const pathname = urlObj.pathname.toLowerCase();
-		if (pathname.endsWith('.flv')) {
-			type = 'flv';
-		} else if (pathname.endsWith('.m3u8')) {
-			type = 'm3u8';
-		} else {
-			debugInfo.innerText += ' (类型未知)';
-		}
-
-        // --- 播放逻辑函数 ---
-
-        // FLV 播放函数
-        function playFlv(video, url, art) {
-            if (mpegts.isSupported()) {
-                if (art.flv) art.flv.destroy();
-                const flv = mpegts.createPlayer({
-                    type: 'flv',
-                    url: url,
-                    isLive: true, // 建议开启直播模式，减少缓存
-                    cors: true,
-                });
-                flv.attachMediaElement(video);
-                flv.load();
-                art.flv = flv;
-                art.on('destroy', () => flv.destroy());
-            } else {
-                art.notice.show = '不支持 FLV 播放格式';
-            }
-        }
-
-        // M3U8 播放函数
-        function playM3u8(video, url, art) {
-            if (Hls.isSupported()) {
-                if (art.hls) art.hls.destroy();
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                art.hls = hls;
-                art.on('destroy', () => hls.destroy());
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Safari 等原生支持
-                video.src = url;
-            } else {
-                art.notice.show = '不支持 M3U8 播放格式';
-            }
-        }
-
-        // --- 初始化 Artplayer ---
-        const art = new Artplayer({
-            container: '.artplayer-app',
-            url: videoUrl,
-            type: type,
-            title: decodeURIComponent(videoUrl.split('/').pop()) || '视频播放', // 尝试从链接提取文件名作为标题
-            volume: 0.8,
-            isLive: type === 'flv', // 如果是 flv，通常视为直播流
-            muted: false,
-            autoplay: true,
-            pip: true,
-            setting: true,
-            playbackRate: true,
-            aspectRatio: true,
-            screenshot: true,
-            customType: {
-                flv: playFlv,
-                m3u8: playM3u8,
-            },
-        });
-
-        art.on('ready', () => {
-            console.info('播放器已就绪', art);
-            debugInfo.innerText += ' - 播放就绪';
-        });
-
-        art.on('error', (err) => {
-             console.error('播放出错', err);
-             art.notice.show = '播放出错，请检查链接或网络';
-             debugInfo.innerText += ' - 播放出错';
-        });
-
-    </script>
+    <script src="player.js"></script>
 </body>
 </html>

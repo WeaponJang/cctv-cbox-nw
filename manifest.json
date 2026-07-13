@@ -1,22 +1,43 @@
 {
-  "manifest_version": 3,
-  "name": "Artplayer 视频播放器",
-  "version": "1.1",
-  "description": "通过点击、消息或请求拦截来播放 FLV 和 M3U8 视频。",
-  "permissions": [
-    "webRequest",
-    "webRequestBlocking"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ]
-}
+   "action": {
+     "default_icon": "icon128.png",
+     "default_popup": "popup.html",
+     "default_title": "Artplayer 视频播放器"
+   },
+   "background": {
+     "service_worker": "event.js"
+   },
+   "content_scripts": [
+     {
+       "js": ["content.js"],
+       "matches": ["<all_urls>"]
+     }
+   ],
+   "content_security_policy": {
+     "extension_pages": "script-src 'self'; object-src 'self'"
+   },
+   "description": "通过点击、消息或请求拦截来播放 FLV 和 M3U8 视频。",
+   "homepage_url": "https://github.com/WeaponJang/ArtPlayer-MV3",
+   "icons": {
+     "128": "icon128.png"
+   },
+   "manifest_version": 3,
+   "version": "1.1.1",
+   "name": "Artplayer-MV3",
+   "permissions": [
+     "webRequest"
+   ],
+   "web_accessible_resources": [
+     {
+       "resources": ["*.html", "*.js", "*.css", "*.png"],
+       "matches": ["<all_urls>"]
+     }
+   ],
+   "host_permissions": [
+    "*://*/*.m3u8*",
+    "*://*/*.flv*",
+    "http://*/*",
+    "https://*/*",
+    "file:///*"
+   ]
+ }
